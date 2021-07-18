@@ -9,6 +9,7 @@ import bottle
 from bottle import static_file
 import torch
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
+import sys
 
 from soqal import SOQAL
 sys.path.append(os.path.abspath("retriever"))
