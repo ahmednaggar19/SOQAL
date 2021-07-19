@@ -15,6 +15,7 @@ import __main__
 from soqal import SOQAL
 sys.path.append(os.path.abspath("retriever"))
 from retriever.TfidfRetriever import HierarchicalTfidf
+from retriever.TfidfRetriever import TfidfRetriever
 sys.path.append(os.path.abspath("bert"))
 from bert.Bert_model import SquadExample
 
