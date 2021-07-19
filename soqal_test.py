@@ -121,7 +121,7 @@ class HuggingFaceModel:
         nbest = {}
         idx = 0
         for example in eval_examples:
-            # TODO:  extract question and text from example
+            print(example.question_text, example.context_text)
             inputs = self.tokenizer(example.question_text, example.context_text, add_special_tokens=True, return_tensors="pt")
             input_ids = inputs["input_ids"].tolist()[0]
             outputs = self.model(**inputs)
