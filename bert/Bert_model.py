@@ -67,7 +67,7 @@ class SquadExample(object):
     def __init__(self,
                  qas_id,
                  question_text,
-                 doc_tokens,
+                 doc_tokens=None,
                  orig_answer_text=None,
                  start_position=None,
                  end_position=None,
