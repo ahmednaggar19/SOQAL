@@ -174,7 +174,7 @@ class HuggingFaceModel:
         for example in eval_examples:
             inputs = self.prepare_validation_features(example)
             # inputs = self.tokenizer(example["question"], example["context"], add_special_tokens=True, return_tensors="pt")
-            input_ids = inputs["input_ids"].tolist()[0]
+            input_ids = inputs["input_ids"][0]
             outputs = self.model(**inputs)
             answer_start_scores = outputs.start_logits
             answer_end_scores = outputs.end_logits
