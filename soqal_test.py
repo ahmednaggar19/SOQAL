@@ -11,6 +11,7 @@ import torch
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import sys
 import __main__
+import tf
 
 from soqal import SOQAL
 sys.path.append(os.path.abspath("retriever"))
