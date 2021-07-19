@@ -186,8 +186,8 @@ class HuggingFaceModel:
 
             answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
             nbest[idx][0] = {
-                'start_logit': outputs.start_logits[answer_start],
-                'end_logits': outputs.end_logits[answer_end],
+                'start_logit': outputs.start_logits[0],
+                'end_logit': outputs.end_logits[0],
                 'text': answer
             }
             idx += 1
