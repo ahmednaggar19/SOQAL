@@ -17,8 +17,8 @@ from soqal import SOQAL
 sys.path.append(os.path.abspath("retriever"))
 from retriever.TfidfRetriever import HierarchicalTfidf
 from retriever.TfidfRetriever import TfidfRetriever
-sys.path.append(os.path.abspath("bert"))
-from bert.Bert_model import SquadExample
+sys.path.append(os.path.abspath(os.path.abspath("huggingface")))
+from huggingface.HuggingFaceModel import HuggingFaceModel
 
 app = bottle.Bottle()
 query = []
@@ -78,70 +78,8 @@ class Demo(object):
                 response = self.model.ask(query)
                 query = []
 
-def read_squad_examples(input_file):
-    """Read a SQuAD json file into a list of SquadExample."""
-    if not isinstance(input_file, list):
-        with tf.io.gfile.GFile(input_file) as reader:
-            input_data = json.load(reader)["data"]
-    else:
-        input_data = input_file
-    
-    examples = []
-    for entry in input_data:
-        for paragraph in entry["paragraphs"]:
-            paragraph_text = paragraph["context"]
-            
-            for qa in paragraph["qas"]:
-                qas_id = qa["id"]
-                question_text = qa["question"]
-                start_position = None
-                end_position = None
-                orig_answer_text = None
-
-                example = SquadExample(
-                    qas_id=qas_id,
-                    question_text=question_text,
-                    context_text=paragraph_text,
-                    orig_answer_text=orig_answer_text,
-                    start_position=start_position,
-                    end_position=end_position,
-                    is_impossible=False)
-                examples.append(example)
-
-    return examples
 
 
-class HuggingFaceModel:
-    def __init__(self, model_checkpoint_path):
-        self.model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint_path)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path)
-
-    def predict_batch(self, input_data):
-        eval_examples = read_squad_examples(input_data)
-        nbest = {}
-        idx = 0
-        for example in eval_examples:
-            print(example.question_text, example.context_text)
-            inputs = self.tokenizer(example.question_text, example.context_text, add_special_tokens=True, return_tensors="pt")
-            input_ids = inputs["input_ids"].tolist()[0]
-            outputs = self.model(**inputs)
-            answer_start_scores = outputs.start_logits
-            answer_end_scores = outputs.end_logits
-
-            answer_start = torch.argmax(
-                answer_start_scores
-            )  # Get the most likely beginning of answer with the argmax of the score
-            answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
-
-            answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
-            nbest[idx][0] = {
-                'start_logit': outputs.start_logits[answer_start],
-                'end_logits': outputs.end_logits[answer_end],
-                'text': answer
-            }
-            idx += 1
-
-        return nbest
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--ret-path', help='Retriever Path', required=True)
 parser.add_argument('-m', '--mod-check', help='Reader Model Checkpoint Path', required=True)
