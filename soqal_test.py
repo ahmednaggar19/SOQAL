@@ -145,4 +145,4 @@ def main():
     ret = HierarchicalTfidf(base_r, 50, 50)
     red = HuggingFaceModel(args.model_check)
     AI = SOQAL(ret, red, 0.999)
-    demo = Demo(AI, None)
+    AI.ask("من بطل كأس العالم ١٩٩٨؟")
