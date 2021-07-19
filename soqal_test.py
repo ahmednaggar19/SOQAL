@@ -10,6 +10,7 @@ from bottle import static_file
 import torch
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import sys
+import __main__
 
 from soqal import SOQAL
 sys.path.append(os.path.abspath("retriever"))
@@ -138,16 +139,17 @@ class HuggingFaceModel:
         return nbest
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--ret-path', help='Retriever Path', required=True)
-parser.add_argument('-m', '--mod-check', help='Retriever Path', required=True)
+parser.add_argument('-m', '--mod-check', help='Reader Model Checkpoint Path', required=True)
 
 def main():
     args = parser.parse_args()
+    __main__.TfidfRetriever = TfidfRetriever
     base_r = pickle.load(open(args.ret_path, "rb"))
     ret = HierarchicalTfidf(base_r, 50, 50)
-    red = HuggingFaceModel(args.model_check)
-    AI = SOQAL(ret, red, 0.999)
-    pred = AI.ask("من بطل كأس العالم ١٩٩٨؟")
-    print(pred)
+    # red = HuggingFaceModel(args.model_check)
+    # AI = SOQAL(ret, red, 0.999)
+    # pred = AI.ask("من بطل كأس العالم ١٩٩٨؟")
+    # print(pred)
 
 if __name__ == "__main__":
     main()
