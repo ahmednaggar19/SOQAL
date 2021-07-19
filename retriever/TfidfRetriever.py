@@ -11,6 +11,8 @@ from numpy import dot, array
 from scipy import sparse
 import argparse
 
+nltk.download('stopwords')
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--ngrams", type=int, default=1, help="n-gram order")
 parser.add_argument("-k", "--topk", type=int, default=10, help="number of documents retriever should return")
