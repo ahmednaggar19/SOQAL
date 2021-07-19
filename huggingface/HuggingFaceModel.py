@@ -168,10 +168,10 @@ class HuggingFaceModel:
 
     def predict_batch(self, examples):
         
-        # eval_examples = read_squad_examples(input_data)
+        eval_examples = read_squad_examples(examples)
         nbest = {}
         idx = 0
-        for example in examples:
+        for example in eval_examples:
             inputs = self.prepare_validation_features(example)
             # inputs = self.tokenizer(example["question"], example["context"], add_special_tokens=True, return_tensors="pt")
             input_ids = inputs["input_ids"].tolist()[0]
