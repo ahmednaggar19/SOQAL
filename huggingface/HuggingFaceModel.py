@@ -171,9 +171,9 @@ class HuggingFaceModel:
         # eval_examples = read_squad_examples(input_data)
         nbest = {}
         idx = 0
-        prepared_examples = self.prepare_validation_features(examples)
-        for example in prepared_examples:
-            inputs = self.tokenizer(example["question"], example["context"], add_special_tokens=True, return_tensors="pt")
+        for example in examples:
+            inputs = self.prepare_validation_features(example)
+            # inputs = self.tokenizer(example["question"], example["context"], add_special_tokens=True, return_tensors="pt")
             input_ids = inputs["input_ids"].tolist()[0]
             outputs = self.model(**inputs)
             answer_start_scores = outputs.start_logits
