@@ -139,6 +139,7 @@ class HuggingFaceModel:
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--ret-path', help='Retriever Path', required=True)
 parser.add_argument('-m', '--mod-check', help='Retriever Path', required=True)
+
 def main():
     args = parser.parse_args()
     base_r = pickle.load(open(args.ret_path, "rb"))
@@ -147,3 +148,6 @@ def main():
     AI = SOQAL(ret, red, 0.999)
     pred = AI.ask("من بطل كأس العالم ١٩٩٨؟")
     print(pred)
+
+if __name__ == "__main__":
+    main()
