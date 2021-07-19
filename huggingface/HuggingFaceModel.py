@@ -169,7 +169,7 @@ class HuggingFaceModel:
     def predict_batch(self, examples):
         
         eval_examples = read_squad_examples(examples)
-        nbest = {}
+        nbest = []
         idx = 0
         for example in eval_examples:
             # inputs = self.prepare_validation_features(example)
@@ -187,9 +187,10 @@ class HuggingFaceModel:
             answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
 
             answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
-            nbest[idx][0] = {
-                'start_logit': outputs.start_logits[0],
-                'end_logit': outputs.end_logits[0],
+            nbest[str(idx)] = {}
+            nbest[str(idx)][0] = {
+                'start_logit': answer_start,
+                'end_logit': answer_end,
                 'text': answer
             }
             idx += 1
