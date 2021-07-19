@@ -179,6 +179,8 @@ class HuggingFaceModel:
             answer_start_scores = outputs.start_logits
             answer_end_scores = outputs.end_logits
 
+            print(answer_start_scores, answer_end_scores)
+            
             answer_start = torch.argmax(
                 answer_start_scores
             )  # Get the most likely beginning of answer with the argmax of the score
