@@ -147,7 +147,7 @@ def main():
     __main__.TfidfRetriever = TfidfRetriever
     base_r = pickle.load(open(args.ret_path, "rb"))
     ret = HierarchicalTfidf(base_r, 50, 50)
-    red = HuggingFaceModel(args.model_check)
+    red = HuggingFaceModel(args.mod_check)
     AI = SOQAL(ret, red, 0.999)
     pred = AI.ask("من بطل كأس العالم ١٩٩٨؟")
     print(pred)
