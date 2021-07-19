@@ -169,7 +169,7 @@ class HuggingFaceModel:
     def predict_batch(self, examples):
         
         eval_examples = read_squad_examples(examples)
-        nbest = []
+        nbest = {}
         idx = 0
         for example in eval_examples:
             # inputs = self.prepare_validation_features(example)
@@ -178,8 +178,6 @@ class HuggingFaceModel:
             outputs = self.model(**inputs)
             answer_start_scores = outputs.start_logits
             answer_end_scores = outputs.end_logits
-
-            print(answer_start_scores, answer_end_scores)
             
             answer_start = torch.argmax(
                 answer_start_scores
