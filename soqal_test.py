@@ -80,9 +80,12 @@ class Demo(object):
 
 def read_squad_examples(input_file):
     """Read a SQuAD json file into a list of SquadExample."""
-    with tf.io.gfile.GFile(input_file) as reader:
-        input_data = json.load(reader)["data"]
-
+    if not isinstance(input_file, list):
+        with tf.io.gfile.GFile(input_file) as reader:
+            input_data = json.load(reader)["data"]
+    else:
+        input_data = input_file
+    
     examples = []
     for entry in input_data:
         for paragraph in entry["paragraphs"]:
