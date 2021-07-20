@@ -179,8 +179,7 @@ class HuggingFaceModel:
                 max_length=MAX_LENGTH,
                 truncation="only_second",
                 return_overflowing_tokens=True,
-                stride=DOC_STRIDE,
-                return_tensors="pt")
+                stride=DOC_STRIDE)
 
             for input_ids_idx in len(inputs["input_ids"]):
                 # input_ids = inputs["input_ids"][input_idx]
