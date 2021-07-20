@@ -179,10 +179,12 @@ class HuggingFaceModel:
                 max_length=MAX_LENGTH,
                 truncation="only_second",
                 return_overflowing_tokens=True,
-                stride=DOC_STRIDE)
-            for input_ids_list in inputs["input_ids"]:
+                stride=DOC_STRIDE,
+                return_tensors="pt")
+
+            for input_ids_idx in len(inputs["input_ids"]):
                 # input_ids = inputs["input_ids"][input_idx]
-                outputs = self.model(**input_ids_list)
+                outputs = self.model(**inputs["input_ids"].toList()[input_ids_idx])
                 answer_start_scores = outputs.start_logits
                 answer_end_scores = outputs.end_logits
 
