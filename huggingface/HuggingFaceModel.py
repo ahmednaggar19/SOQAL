@@ -183,7 +183,7 @@ class HuggingFaceModel:
 
             for input_ids_idx in range(len(inputs["input_ids"])):
                 # input_ids = inputs["input_ids"][input_idx]
-                outputs = self.model(**inputs["input_ids"].toList()[input_ids_idx])
+                outputs = self.model(**inputs["input_ids"][input_ids_idx])
                 answer_start_scores = outputs.start_logits
                 answer_end_scores = outputs.end_logits
 
