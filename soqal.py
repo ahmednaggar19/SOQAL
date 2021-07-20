@@ -1,11 +1,11 @@
-import numpy as np
+import torch
 import sys
 import pickle
 import json
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
-    e_x = np.exp(x - np.max(x))
+    e_x = torch.exp(x - torch.max(x))
     return e_x / e_x.sum()
 
 class SOQAL:
