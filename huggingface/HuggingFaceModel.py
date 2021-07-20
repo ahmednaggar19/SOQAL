@@ -189,7 +189,6 @@ class HuggingFaceModel:
 
         answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
         return answer_start_logit, answer_end_logit, answer
-            
 
     
     def predict_batch(self, examples):
@@ -213,6 +212,7 @@ class HuggingFaceModel:
                         'text': answer
                     }
                     idx += 1
+                    print(idx)
             else:
                 answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"])
                 nbest[str(idx)] = {}
@@ -222,5 +222,6 @@ class HuggingFaceModel:
                     'text': answer
                 }
                 idx += 1
+                print(idx)
 
         return nbest
