@@ -65,10 +65,10 @@ class SOQAL:
 
 
     def agreggate(self, answers_text, answers_scores, docs_scores):
-        ans_scores = np.asarray(answers_scores)
-        doc_scores = np.asarray(docs_scores)
+        ans_scores = answers_scores
+        doc_scores = docs_scores
         final_scores = (1-self.beta) * softmax(ans_scores) + self.beta * softmax(doc_scores)
-        ans_indx = np.argsort(final_scores)[::-1]
+        ans_indx = torch.argsort(final_scores)[::-1]
         pred = []
         for k in range(0, min(5,len(ans_indx))):
             pred.append(answers_text[ans_indx[k]])
