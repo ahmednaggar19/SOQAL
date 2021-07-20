@@ -172,17 +172,17 @@ class HuggingFaceModel:
         nbest = {}
         idx = 0
         for example in eval_examples:
-            # inputs = self.prepare_validation_features(example)
-            inputs = self.tokenizer(
-                example["question"],
-                example["context"],
-                max_length=MAX_LENGTH,
-                stride=DOC_STRIDE,
-                truncation="only_second",
-                return_overflowing_tokens=True,
-                # return_tensor="pt",
-                # padding=True
-                )
+            inputs = self.prepare_validation_features([example])
+            # inputs = self.tokenizer(
+            #     example["question"],
+            #     example["context"],
+            #     max_length=MAX_LENGTH,
+            #     stride=DOC_STRIDE,
+            #     truncation="only_second",
+            #     return_overflowing_tokens=True,
+            #     # return_tensor="pt",
+            #     # padding=True
+            #     )
 
             # for input_ids in inputs["input_ids"][:]:
             # input_ids = inputs["input_ids"][input_idx]
