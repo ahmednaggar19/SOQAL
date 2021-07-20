@@ -50,6 +50,9 @@ def substr_with_stride(str, max_len=MAX_LENGTH, stride=DOC_STRIDE):
         end_pos += stride
         start += stride
     return strs
+
+def chunkstring(string, length):
+    return (string[0+i:length+i] for i in range(0, len(string), length))
 class HuggingFaceModel:
     def __init__(self, model_checkpoint_path):
         self.model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint_path)
@@ -198,13 +201,10 @@ class HuggingFaceModel:
         idx = 0
         for example in eval_examples:
             if len(example["context"]) > MAX_LENGTH:
-                start = 0
-                end_pos = MAX_LENGTH
-                while end_pos < len(example["context"]):
-                    end_pos += DOC_STRIDE
-                    start += DOC_STRIDE
-                
-                    answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"][start:end_pos])
+                ctxs = chunkstring(example["context"], MAX_LENGTH)
+                for ctx in ctxs:
+                    
+                    answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], ctx)
                     nbest[str(idx)] = {}
                     nbest[str(idx)][0] = {
                         'start_logit': answer_start_logit,
