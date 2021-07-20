@@ -180,9 +180,9 @@ class HuggingFaceModel:
                 truncation="only_second",
                 return_overflowing_tokens=True,
                 stride=DOC_STRIDE)
-            for input_idx in len(inputs["input_ids"]):
-                input_ids = inputs["input_ids"][input_idx]
-                outputs = self.model(**inputs)
+            for input_ids_list in inputs["input_ids"]:
+                # input_ids = inputs["input_ids"][input_idx]
+                outputs = self.model(**input_ids_list)
                 answer_start_scores = outputs.start_logits
                 answer_end_scores = outputs.end_logits
 
