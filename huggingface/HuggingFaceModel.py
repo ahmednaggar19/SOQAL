@@ -181,7 +181,7 @@ class HuggingFaceModel:
                 return_overflowing_tokens=True,
                 stride=DOC_STRIDE)
 
-            for input_ids_idx in len(inputs["input_ids"]):
+            for input_ids_idx in range(len(inputs["input_ids"])):
                 # input_ids = inputs["input_ids"][input_idx]
                 outputs = self.model(**inputs["input_ids"].toList()[input_ids_idx])
                 answer_start_scores = outputs.start_logits
