@@ -200,28 +200,27 @@ class HuggingFaceModel:
         nbest = {}
         idx = 0
         for example in eval_examples:
-            if len(example["context"]) > MAX_LENGTH:
-                ctxs = chunkstring(example["context"], MAX_LENGTH)
-                for ctx in ctxs:
+            # if len(example["context"]) > MAX_LENGTH:
+            #     ctxs = chunkstring(example["context"], MAX_LENGTH)
+            #     for ctx in ctxs:
                     
-                    answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], ctx)
-                    nbest[str(idx)] = {}
-                    nbest[str(idx)][0] = {
-                        'start_logit': answer_start_logit,
-                        'end_logit': answer_end_logit,
-                        'text': answer
-                    }
-                    idx += 1
-                    print(idx)
-            else:
-                answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"])
-                nbest[str(idx)] = {}
-                nbest[str(idx)][0] = {
-                    'start_logit': answer_start_logit,
-                    'end_logit': answer_end_logit,
-                    'text': answer
-                }
-                idx += 1
-                print(idx)
+            #         answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], ctx)
+            #         nbest[str(idx)] = {}
+            #         nbest[str(idx)][0] = {
+            #             'start_logit': answer_start_logit,
+            #             'end_logit': answer_end_logit,
+            #             'text': answer
+            #         }
+            #         idx += 1
+            # else:
+            answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"])
+            nbest[str(idx)] = {}
+            nbest[str(idx)][0] = {
+                'start_logit': answer_start_logit,
+                'end_logit': answer_end_logit,
+                'text': answer
+            }
+            idx += 1
+
 
         return nbest
