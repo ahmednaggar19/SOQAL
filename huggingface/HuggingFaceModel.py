@@ -176,6 +176,7 @@ class HuggingFaceModel:
     
     def query_model(self, question, context):
         inputs = self.tokenizer(question,context,add_special_tokens=True, return_tensors="pt")
+        input_ids = inputs["input_ids"].tolist()[0]
         outputs = self.model(**inputs)
         answer_start_scores = outputs.start_logits
         answer_end_scores = outputs.end_logits
