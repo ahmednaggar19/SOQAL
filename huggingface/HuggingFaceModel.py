@@ -2,7 +2,7 @@ from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import torch
 
 MAX_LENGTH = 384
-DOC_STRIDE = 64
+DOC_STRIDE = 20
 
 def read_squad_examples(input_file, is_training=False):
     """Read a SQuAD json file into a list of SquadExample."""
@@ -199,9 +199,13 @@ class HuggingFaceModel:
         idx = 0
         for example in eval_examples:
             if len(example["context"]) > MAX_LENGTH:
-                small_ctxs = substr_with_stride(example["context"])
-                for ctx in small_ctxs:
-                    answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], ctx)
+                start = 0
+                end_pos = MAX_LENGTH
+                while end_pos < len(example["context"]):
+                    end_pos += DOC_STRIDE
+                    start += DOC_STRIDE
+                
+                    answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"][start:end_pos])
                     nbest[str(idx)] = {}
                     nbest[str(idx)][0] = {
                         'start_logit': answer_start_logit,
