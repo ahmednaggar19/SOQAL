@@ -91,8 +91,11 @@ def main():
     ret = HierarchicalTfidf(base_r, 50, 50)
     red = HuggingFaceModel(args.mod_check)
     AI = SOQAL(ret, red, 0.999)
-    pred = AI.ask("من بطل كأس العالم ١٩٩٨؟")
-    print(pred)
-
+    predictions = AI.ask("أين أقيم كأس العالم ١٩٩٨؟")
+    print("="*10)
+    print("Question answers : ")
+    for pred in predictions:
+        print("A: ", pred)
+    print("="*10)
 if __name__ == "__main__":
     main()
