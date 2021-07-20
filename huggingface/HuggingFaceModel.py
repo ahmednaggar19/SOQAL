@@ -41,7 +41,15 @@ def read_squad_examples(input_file, is_training=False):
 
     return examples
 
-
+def substr_with_stride(str, max_len, stride):
+    start = 0
+    end_pos = max_len
+    strs = [] 
+    while end_pos < len(str):
+        strs.append(str[start:end_pos])
+        end_pos += stride
+        start += stride
+    return strs
 class HuggingFaceModel:
     def __init__(self, model_checkpoint_path):
         self.model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint_path)
@@ -165,45 +173,49 @@ class HuggingFaceModel:
             ]
 
         return tokenized_examples
+    
+    def query_model(self, question, context):
+        inputs = self.tokenizer(question,context,return_tensor="pt",padding=True)
+        outputs = self.model(**inputs)
+        answer_start_scores = outputs.start_logits
+        answer_end_scores = outputs.end_logits
 
+        answer_start_logit = torch.max(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
+        answer_end_logit = torch.max(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
+
+        answer_start = torch.argmax(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
+        answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
+
+        answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
+        return answer_start_logit, answer_end_logit, answer
+            
+
+    
     def predict_batch(self, examples):
         
         eval_examples = read_squad_examples(examples)
         nbest = {}
         idx = 0
         for example in eval_examples:
-            inputs = self.prepare_validation_features(example)
-            # inputs = self.tokenizer(
-            #     example["question"],
-            #     example["context"],
-            #     max_length=MAX_LENGTH,
-            #     stride=DOC_STRIDE,
-            #     truncation="only_second",
-            #     return_overflowing_tokens=True,
-            #     # return_tensor="pt",
-            #     # padding=True
-            #     )
-
-            # for input_ids in inputs["input_ids"][:]:
-            # input_ids = inputs["input_ids"][input_idx]
-            outputs = self.model(**inputs)
-            answer_start_scores = outputs.start_logits
-            answer_end_scores = outputs.end_logits
-
-            answer_start_logit = torch.max(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
-            answer_end_logit = torch.max(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
-
-            answer_start = torch.argmax(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
-            answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
-
-            answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
-
-            nbest[str(idx)] = {}
-            nbest[str(idx)][0] = {
-                'start_logit': answer_start_logit,
-                'end_logit': answer_end_logit,
-                'text': answer
-            }
-            idx += 1
+            if len(example["context"]) > MAX_LENGTH:
+                small_ctxs = substr_with_stride(example["context"])
+                for ctx in small_ctxs:
+                    answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], ctx)
+                    nbest[str(idx)] = {}
+                    nbest[str(idx)][0] = {
+                        'start_logit': answer_start_logit,
+                        'end_logit': answer_end_logit,
+                        'text': answer
+                    }
+                    idx += 1
+            else:
+                answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"])
+                nbest[str(idx)] = {}
+                nbest[str(idx)][0] = {
+                    'start_logit': answer_start_logit,
+                    'end_logit': answer_end_logit,
+                    'text': answer
+                }
+                idx += 1
 
         return nbest
