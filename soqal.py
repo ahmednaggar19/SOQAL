@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import sys
 import pickle
@@ -5,7 +6,7 @@ import json
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
-    e_x = torch.exp(x - torch.max(x))
+    e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum()
 
 class SOQAL:
@@ -60,15 +61,15 @@ class SOQAL:
                 pred_score = pred['start_logit'] * pred['end_logit']
                 pred_answer = pred['text']
                 answers_text.append(pred_answer)
-                answers_scores.append(pred_score)
+                answers_scores.append(pred_score.detach().cpu().numpy())
         return answers_text, answers_scores
 
 
     def agreggate(self, answers_text, answers_scores, docs_scores):
-        ans_scores = answers_scores
-        doc_scores = docs_scores
+        ans_scores = np.asarray(answers_scores)
+        doc_scores = np.asarray(docs_scores)
         final_scores = (1-self.beta) * softmax(ans_scores) + self.beta * softmax(doc_scores)
-        ans_indx = torch.argsort(final_scores)[::-1]
+        ans_indx = np.argsort(final_scores)[::-1]
         pred = []
         for k in range(0, min(5,len(ans_indx))):
             pred.append(answers_text[ans_indx[k]])
