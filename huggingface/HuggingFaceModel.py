@@ -177,30 +177,33 @@ class HuggingFaceModel:
                 example["question"],
                 example["context"],
                 max_length=MAX_LENGTH,
+                stride=DOC_STRIDE,
                 truncation="only_second",
                 return_overflowing_tokens=True,
-                stride=DOC_STRIDE)
+                # return_tensor="pt",
+                # padding=True
+                )
 
-            for input_ids_idx in range(len(inputs["input_ids"])):
-                # input_ids = inputs["input_ids"][input_idx]
-                outputs = self.model(inputs["input_ids"][input_ids_idx])
-                answer_start_scores = outputs.start_logits
-                answer_end_scores = outputs.end_logits
+            # for input_ids in inputs["input_ids"][:]:
+            # input_ids = inputs["input_ids"][input_idx]
+            outputs = self.model(**inputs)
+            answer_start_scores = outputs.start_logits
+            answer_end_scores = outputs.end_logits
 
-                answer_start_logit = torch.max(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
-                answer_end_logit = torch.max(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
+            answer_start_logit = torch.max(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
+            answer_end_logit = torch.max(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
 
-                answer_start = torch.argmax(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
-                answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
+            answer_start = torch.argmax(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
+            answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
 
-                answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
+            answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
 
-                nbest[str(idx)] = {}
-                nbest[str(idx)][0] = {
-                    'start_logit': answer_start_logit,
-                    'end_logit': answer_end_logit,
-                    'text': answer
-                }
-                idx += 1
+            nbest[str(idx)] = {}
+            nbest[str(idx)][0] = {
+                'start_logit': answer_start_logit,
+                'end_logit': answer_end_logit,
+                'text': answer
+            }
+            idx += 1
 
         return nbest
