@@ -175,7 +175,7 @@ class HuggingFaceModel:
         return tokenized_examples
     
     def query_model(self, question, context):
-        inputs = self.tokenizer(question,context,return_tensor="pt",padding=True)
+        inputs = self.tokenizer(question,context,return_tensor="pt")
         outputs = self.model(**inputs)
         answer_start_scores = outputs.start_logits
         answer_end_scores = outputs.end_logits
