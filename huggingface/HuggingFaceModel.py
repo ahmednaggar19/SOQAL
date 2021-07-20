@@ -41,7 +41,7 @@ def read_squad_examples(input_file, is_training=False):
 
     return examples
 
-def substr_with_stride(str, max_len, stride):
+def substr_with_stride(str, max_len=MAX_LENGTH, stride=DOC_STRIDE):
     start = 0
     end_pos = max_len
     strs = [] 
