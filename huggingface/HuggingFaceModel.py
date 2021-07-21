@@ -178,7 +178,10 @@ class HuggingFaceModel:
         return tokenized_examples
     
     def query_model(self, question, context):
-        inputs = self.tokenizer(question, context, max_length=MAX_LENGTH, add_special_tokens=True, return_tensors="pt")
+        inputs = self.tokenizer(question, context,
+         max_length=MAX_LENGTH,
+         truncation="only_second",
+         add_special_tokens=True, return_tensors="pt")
         input_ids = inputs["input_ids"].tolist()[0]
         outputs = self.model(**inputs)
         answer_start_scores = outputs.start_logits
