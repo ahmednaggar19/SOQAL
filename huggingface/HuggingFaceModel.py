@@ -190,7 +190,7 @@ class HuggingFaceModel:
         print("input_ids size", inputs["input_ids"].size())
         input_ids = inputs["input_ids"].tolist()[0]
         outputs = self.model(**inputs)
-        print("outputs size", outputs.size())
+        print("outputs size", outputs.start_logits.size())
         answer_start_scores = outputs.start_logits
 
         answer_end_scores = outputs.end_logits
