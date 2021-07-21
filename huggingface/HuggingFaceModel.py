@@ -186,6 +186,7 @@ class HuggingFaceModel:
                                 padding="max_length",
                                 add_special_tokens=True, return_tensors="pt")
         inputs.pop("overflow_to_sample_mapping")
+        print("input_ids len", inputs["input_ids"].size())
         input_ids = inputs["input_ids"].tolist()[0]
         outputs = self.model(**inputs)
         answer_start_scores = outputs.start_logits
