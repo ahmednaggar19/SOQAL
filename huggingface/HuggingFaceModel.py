@@ -185,7 +185,7 @@ class HuggingFaceModel:
                                 return_overflowing_tokens=True,
                                 padding="max_length",
                                 truncation="only_second",
-                                return_offsets_mapping=True,
+                                # return_offsets_mapping=True,
                                 add_special_tokens=True, return_tensors="pt")
         inputs.pop("overflow_to_sample_mapping")
         print("input_ids size", inputs["input_ids"].size())
