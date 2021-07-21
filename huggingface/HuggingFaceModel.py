@@ -2,7 +2,7 @@ from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import torch
 
 MAX_LENGTH = 384
-DOC_STRIDE = 20
+DOC_STRIDE = 256
 
 def read_squad_examples(input_file, is_training=False):
     """Read a SQuAD json file into a list of SquadExample."""
