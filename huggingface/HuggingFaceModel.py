@@ -220,7 +220,8 @@ class HuggingFaceModel:
             #         }
             #         idx += 1
             # else:
-            answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"])
+            answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], 
+                        example["context"] if len(example["context"]) < MAX_LENGTH else example["context"][])
             nbest[str(idx)] = {}
             nbest[str(idx)][0] = {
                 'start_logit': answer_start_logit,
