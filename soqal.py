@@ -88,6 +88,6 @@ class SOQAL:
         docs_scores_rolled = torch.cat(docs_scores_list, 0)
         print("got predictions from model")
         answers, answers_scores = self.get_predictions(nbest)
-        print("sizes : ", docs_scores_rolled.size(), answers_scores.shape)
+        print("sizes : ", docs_scores_rolled.size(), len(answers_scores))
         prediction = self.agreggate(answers,answers_scores,docs_scores_rolled)
         return prediction
