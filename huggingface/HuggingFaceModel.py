@@ -1,7 +1,7 @@
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import torch
 
-MAX_LENGTH = 1024
+MAX_LENGTH = 384
 DOC_STRIDE = 20
 
 def read_squad_examples(input_file, is_training=False):
@@ -179,8 +179,10 @@ class HuggingFaceModel:
     
     def query_model(self, question, context):
         inputs = self.tokenizer(question, context,
-                                # max_length=MAX_LENGTH,
-                                # truncation="only_second",
+                                max_length=MAX_LENGTH,
+                                stride=DOC_STRIDE,
+                                return_overflowing_tokens=True,
+                                padding="max_length",
                                 add_special_tokens=True, return_tensors="pt")
         input_ids = inputs["input_ids"].tolist()[0]
         outputs = self.model(**inputs)
