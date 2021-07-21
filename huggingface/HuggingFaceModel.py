@@ -208,7 +208,7 @@ class HuggingFaceModel:
         eval_examples = read_squad_examples(examples)
         nbest = {}
         idx = 0
-        for example in eval_examples:
+        for example in eval_examples[:2]:
             # if len(example["context"]) > MAX_LENGTH:
             #     ctxs = chunkstring(example["context"], MAX_LENGTH)
             #     for ctx in ctxs:
