@@ -28,7 +28,6 @@ def read_squad_examples(input_file, is_training=False):
                     "id": qas_id,
                     "context": paragraph_text,
                     "question": question_text,
-                    "doc_title": input_data["title"]
                 }
                 # (
                 #     qas_id=qas_id,
