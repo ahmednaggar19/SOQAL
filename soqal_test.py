@@ -88,7 +88,7 @@ def main():
     args = parser.parse_args()
     __main__.TfidfRetriever = TfidfRetriever
     base_r = pickle.load(open(args.ret_path, "rb"))
-    ret = HierarchicalTfidf(base_r, 1, 1)
+    ret = HierarchicalTfidf(base_r, 10, 10)
     red = HuggingFaceModel(args.mod_check)
     AI = SOQAL(ret, red, 0.999)
     predictions = AI.ask("أفضل لاعب في العالم في كرة القدم")
