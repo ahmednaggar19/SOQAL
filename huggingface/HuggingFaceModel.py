@@ -195,7 +195,7 @@ class HuggingFaceModel:
         print("outputs size", outputs.start_logits.size())
         for i, output in enumerate(outputs.start_logits):
             answer_start_scores = output
-            answer_end_scores = outputs[i].end_logits
+            answer_end_scores = outputs.end_logits[i]
 
             answer_start_logit = torch.max(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
             answer_end_logit = torch.max(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
