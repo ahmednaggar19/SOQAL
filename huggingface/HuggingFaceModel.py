@@ -179,9 +179,9 @@ class HuggingFaceModel:
     
     def query_model(self, question, context):
         inputs = self.tokenizer(question, context,
-         max_length=MAX_LENGTH,
-         truncation="only_second",
-         add_special_tokens=True, return_tensors="pt")
+                                # max_length=MAX_LENGTH,
+                                # truncation="only_second",
+                                add_special_tokens=True, return_tensors="pt")
         input_ids = inputs["input_ids"].tolist()[0]
         outputs = self.model(**inputs)
         answer_start_scores = outputs.start_logits
@@ -216,7 +216,8 @@ class HuggingFaceModel:
             #         }
             #         idx += 1
             # else:
-            answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], example["context"])
+            answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], 
+                            example["context"] if len(example["context"]) > MAX_LENGTH else example["context"][:MAX_LENGTH])
             nbest[str(idx)] = {}
             nbest[str(idx)][0] = {
                 'start_logit': answer_start_logit,
