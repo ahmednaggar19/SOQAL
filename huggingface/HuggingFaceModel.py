@@ -204,7 +204,7 @@ class HuggingFaceModel:
             answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
 
             answer = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[i][answer_start:answer_end]))
-            answers.append({answer_start_logit, answer_end_logit, answer}) 
+            answers.append({"s": answer_start_logit, "e": answer_end_logit, "t": answer}) 
         return answers
     
     def predict_batch(self, examples):
@@ -233,9 +233,9 @@ class HuggingFaceModel:
             for answer in answers:
                 nbest[str(idx)] = {}
                 nbest[str(idx)][0] = {
-                    'start_logit': answer.answer_start_logit,
-                    'end_logit': answer.answer_end_logit,
-                    'text': answer.answer
+                    'start_logit': answer["s"],
+                    'end_logit': answer["e"],
+                    'text': answer["t"]
                 }
                 idx += 1
 
