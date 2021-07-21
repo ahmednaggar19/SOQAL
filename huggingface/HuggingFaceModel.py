@@ -238,6 +238,7 @@ class HuggingFaceModel:
                     'end_logit': answer["e"],
                     'text': answer["t"]
                 }
+                doc_to_count[i] = 0 if i not in doc_to_count else doc_to_count[i]
                 doc_to_count[i] += 1
                 idx += 1
 
