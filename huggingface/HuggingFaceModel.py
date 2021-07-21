@@ -187,10 +187,12 @@ class HuggingFaceModel:
                                 truncation="only_second",
                                 add_special_tokens=True, return_tensors="pt")
         inputs.pop("overflow_to_sample_mapping")
-        print("input_ids len", inputs["input_ids"].size())
+        print("input_ids size", inputs["input_ids"].size())
         input_ids = inputs["input_ids"].tolist()[0]
         outputs = self.model(**inputs)
+        print("outputs size", outputs.size())
         answer_start_scores = outputs.start_logits
+
         answer_end_scores = outputs.end_logits
 
         answer_start_logit = torch.max(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
