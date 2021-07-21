@@ -27,7 +27,8 @@ def read_squad_examples(input_file, is_training=False):
                 example = {
                     "id": qas_id,
                     "context": paragraph_text,
-                    "question": question_text
+                    "question": question_text,
+                    "doc_title": input_data["title"]
                 }
                 # (
                 #     qas_id=qas_id,
@@ -211,8 +212,9 @@ class HuggingFaceModel:
         
         eval_examples = read_squad_examples(examples)
         nbest = {}
+        doc_to_count = {}
         idx = 0
-        for example in eval_examples[:2]:
+        for i, example in enumerate(eval_examples[:2]):
             # if len(example["context"]) > MAX_LENGTH:
             #     ctxs = chunkstring(example["context"], MAX_LENGTH)
             #     for ctx in ctxs:
@@ -237,7 +239,8 @@ class HuggingFaceModel:
                     'end_logit': answer["e"],
                     'text': answer["t"]
                 }
+                doc_to_count[i] += 1
                 idx += 1
 
 
-        return nbest
+        return nbest, doc_to_count
