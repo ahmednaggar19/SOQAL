@@ -1,7 +1,7 @@
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import torch
 
-MAX_LENGTH = 384
+MAX_LENGTH = 1024
 DOC_STRIDE = 20
 
 def read_squad_examples(input_file, is_training=False):
