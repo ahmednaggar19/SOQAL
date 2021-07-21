@@ -178,7 +178,7 @@ class HuggingFaceModel:
         return tokenized_examples
     
     def query_model(self, question, context):
-        pr
+        print(len(context))
         inputs = self.tokenizer(question, context,
                                 max_length=MAX_LENGTH,
                                 stride=DOC_STRIDE,
