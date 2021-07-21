@@ -83,7 +83,7 @@ class Demo(object):
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--ret-path', help='Retriever Path', required=True)
 parser.add_argument('-m', '--mod-check', help='Reader Model Checkpoint Path', required=True)
-
+parser.add_argument('-q', '--quest', help='Question', required=True)
 def main():
     args = parser.parse_args()
     __main__.TfidfRetriever = TfidfRetriever
@@ -91,7 +91,7 @@ def main():
     ret = HierarchicalTfidf(base_r, 10, 10)
     red = HuggingFaceModel(args.mod_check)
     AI = SOQAL(ret, red, 0.999)
-    predictions = AI.ask("أفضل لاعب في العالم في كرة القدم")
+    predictions = AI.ask(args.quest)
     print("="*10)
     print("Question answers : ")
     for pred in predictions:
