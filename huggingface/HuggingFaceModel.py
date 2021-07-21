@@ -184,6 +184,7 @@ class HuggingFaceModel:
                                 stride=DOC_STRIDE,
                                 return_overflowing_tokens=True,
                                 padding="max_length",
+                                truncation="only_second",
                                 add_special_tokens=True, return_tensors="pt")
         inputs.pop("overflow_to_sample_mapping")
         print("input_ids len", inputs["input_ids"].size())
