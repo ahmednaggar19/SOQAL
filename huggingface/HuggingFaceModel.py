@@ -4,7 +4,7 @@ import torch
 from preprocess import ArabertPreprocessor
 
 
-model_name = "bert-large-arabertv2"
+model_name = "aubmindlab/bert-base-arabertv2"
 arabert_prep = ArabertPreprocessor(model_name=model_name)
 
 MAX_LENGTH = 384
