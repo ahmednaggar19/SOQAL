@@ -1,3 +1,7 @@
+'''
+    This file was taken as is from https://github.com/aub-mind/arabert.
+'''
+
 import html
 import logging
 import re
