@@ -188,7 +188,6 @@ class HuggingFaceModel:
         return tokenized_examples
     
     def query_model(self, question, context):
-        print(len(context))
         inputs = self.tokenizer(question, context,
                                 max_length=MAX_LENGTH,
                                 stride=DOC_STRIDE,
@@ -215,12 +214,15 @@ class HuggingFaceModel:
             answers.append({"s": answer_start_logit, "e": answer_end_logit, "t": answer}) 
         return answers
     
-    def predict_batch(self, examples, output_to_file=False):
+    def predict_batch(self, examples, output_to_file=False, out_path=None):
+        print("eval before1")
+
         if output_to_file:
             all_predictions = {}
+        print("eval before")
         eval_examples = read_squad_examples(examples)
         nbest = {}
-        for example in eval_examples:
+        for example in eval_examples[:100]:
             context  = example["context"]
             question = example["question"]
             answers = self.query_model(question, context)
@@ -244,6 +246,6 @@ class HuggingFaceModel:
             if output_to_file:
                 all_predictions[example["id"]] = nbest[example["id"]][0]["text"]
         if output_to_file:
-            with tf.gfile.GFile(output_prediction_file, "w") as writer:
+            with tf.gfile.GFile(out_path, "w") as writer:
                     writer.write(json.dumps(all_predictions, indent=4) + "\n")
         return nbest
