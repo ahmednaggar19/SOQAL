@@ -1,6 +1,12 @@
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import torch
 
+from preprocess import ArabertPreprocessor
+
+
+model_name = "bert-large-arabertv2"
+arabert_prep = ArabertPreprocessor(model_name=model_name)
+
 MAX_LENGTH = 384
 DOC_STRIDE = 256
 
@@ -227,7 +233,7 @@ class HuggingFaceModel:
             #         }
             #         idx += 1
             # else:
-            answers = self.query_model(example["question"], 
+            answers = self.query_model(arabert_prep.preprocess(example["question"]), 
                         example["context"] 
                         # if len(example["context"]) < MAX_LENGTH else example["context"][:MAX_LENGTH]
                         )
