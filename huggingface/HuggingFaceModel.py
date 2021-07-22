@@ -234,7 +234,7 @@ class HuggingFaceModel:
             #         idx += 1
             # else:
             answers = self.query_model(arabert_prep.preprocess(example["question"]), 
-                        arabert_prep.preprocess(example["question"])
+                        arabert_prep.preprocess(example["context"])
                         # if len(example["context"]) < MAX_LENGTH else example["context"][:MAX_LENGTH]
                         )
             for answer in answers:
