@@ -81,13 +81,8 @@ class SOQAL:
         print("got documents")
         dataset = self.build_quest_json(quest, docs)
         print("built documents json")
-        nbest, doc_to_count = self.reader.predict_batch(dataset)
-        docs_scores_list = []
-        for i, count in enumerate(doc_to_count):
-            docs_scores_list.append(torch.tensor(doc_scores[i]).repeat_interleave(count))
-        docs_scores_rolled = torch.cat(docs_scores_list, 0)
+        nbest = self.reader.predict_batch(dataset)
         print("got predictions from model")
         answers, answers_scores = self.get_predictions(nbest)
-        print("sizes : ", docs_scores_rolled.size(), len(answers_scores))
-        prediction = self.agreggate(answers,answers_scores,docs_scores_rolled)
+        prediction = self.agreggate(answers,answers_scores,doc_scores)
         return prediction

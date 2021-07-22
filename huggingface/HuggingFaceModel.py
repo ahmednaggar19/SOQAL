@@ -10,6 +10,8 @@ arabert_prep = ArabertPreprocessor(model_name=model_name)
 MAX_LENGTH = 384
 DOC_STRIDE = 256
 
+predictions_file = "predictions.json"
+
 def read_squad_examples(input_file, is_training=False):
     """Read a SQuAD json file into a list of SquadExample."""
     if not isinstance(input_file, list):
@@ -213,39 +215,27 @@ class HuggingFaceModel:
             answers.append({"s": answer_start_logit, "e": answer_end_logit, "t": answer}) 
         return answers
     
-    def predict_batch(self, examples):
-        
+    def predict_batch(self, examples, output_to_file=False):
         eval_examples = read_squad_examples(examples)
         nbest = {}
-        doc_to_count = {}
-        idx = 0
-        for i, example in enumerate(eval_examples[:2]):
-            # if len(example["context"]) > MAX_LENGTH:
-            #     ctxs = chunkstring(example["context"], MAX_LENGTH)
-            #     for ctx in ctxs:
-                    
-            #         answer_start_logit, answer_end_logit, answer = self.query_model(example["question"], ctx)
-            #         nbest[str(idx)] = {}
-            #         nbest[str(idx)][0] = {
-            #             'start_logit': answer_start_logit,
-            #             'end_logit': answer_end_logit,
-            #             'text': answer
-            #         }
-            #         idx += 1
-            # else:
+        for example in eval_examples:
             context  = arabert_prep.preprocess(example["context"])
-            print("Context : ", context)
-            answers = self.query_model(arabert_prep.preprocess(example["question"]),context)
+            question = arabert_prep.preprocess(example["question"])
+            answers = self.query_model(question, context)
             for answer in answers:
-                nbest[str(idx)] = {}
-                nbest[str(idx)][0] = {
-                    'start_logit': answer["s"],
-                    'end_logit': answer["e"],
-                    'text': answer["t"]
-                }
-                doc_to_count[i] = 0 if i not in doc_to_count else doc_to_count[i]
-                doc_to_count[i] += 1
-                idx += 1
-
-
-        return nbest, doc_to_count
+                if example.qas_id not in nbest:
+                    old_answer_score = nbest[example.qas_id][0]["start_logit"] * nbest[example.qas_id][0]["end_logit"]
+                    new_answer_score = answer["s"] * answer["e"]
+                    if new_answer_score > old_answer_score:
+                        nbest[example.qas_id][0] = {                  # just for getting along with SOQAL interface
+                            'start_logit': answer["s"],
+                            'end_logit': answer["e"],
+                            'text': answer["t"]
+                        }
+                else:
+                    nbest[example.qas_id][0] = {                  # just for getting along with SOQAL interface
+                        'start_logit': answer["s"],
+                        'end_logit': answer["e"],
+                        'text': answer["t"]
+                    }
+        return nbest
