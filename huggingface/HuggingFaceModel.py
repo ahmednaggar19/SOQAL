@@ -241,8 +241,8 @@ class HuggingFaceModel:
                         'end_logit': answer["e"],
                         'text': answer["t"]
                     }
-                if output_to_file:
-                    all_predictions[example["id"]] = nbest[example["id"]][0]["text"]
+            if output_to_file:
+                all_predictions[example["id"]] = nbest[example["id"]][0]["text"]
         if output_to_file:
             with tf.gfile.GFile(output_prediction_file, "w") as writer:
                     writer.write(json.dumps(all_predictions, indent=4) + "\n")
