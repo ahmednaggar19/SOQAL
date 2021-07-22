@@ -88,11 +88,11 @@ def main():
     args = parser.parse_args()
     __main__.TfidfRetriever = TfidfRetriever
     base_r = pickle.load(open(args.ret_path, "rb"))
-    ret = HierarchicalTfidf(base_r, 10, 10)
+    ret = HierarchicalTfidf(base_r, 2, 2)
     red = HuggingFaceModel(args.mod_check)
     AI = SOQAL(ret, red, 0.999)
-    predictions = AI.ask(args.quest)
     print("="*10)
+    predictions = AI.ask(args.quest)
     print("Question answers : ")
     for pred in predictions:
         print("A: ", pred)

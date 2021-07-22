@@ -1,5 +1,7 @@
+import json
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 import torch
+import tensorflow as tf
 
 from preprocess import ArabertPreprocessor
 
@@ -10,7 +12,7 @@ arabert_prep = ArabertPreprocessor(model_name=model_name)
 MAX_LENGTH = 384
 DOC_STRIDE = 256
 
-predictions_file = "predictions.json"
+output_prediction_file = "predictions.json"
 
 def read_squad_examples(input_file, is_training=False):
     """Read a SQuAD json file into a list of SquadExample."""
@@ -196,11 +198,9 @@ class HuggingFaceModel:
                                 # return_offsets_mapping=True,
                                 return_tensors="pt")
         inputs.pop("overflow_to_sample_mapping")
-        print("input_ids size", inputs["input_ids"].size())
         input_ids = inputs["input_ids"].tolist()
         outputs = self.model(**inputs)
         answers = []
-        print("outputs size", outputs.start_logits.size())
         for i, output in enumerate(outputs.start_logits):
             answer_start_scores = output
             answer_end_scores = outputs.end_logits[i]
@@ -216,26 +216,34 @@ class HuggingFaceModel:
         return answers
     
     def predict_batch(self, examples, output_to_file=False):
+        if output_to_file:
+            all_predictions = {}
         eval_examples = read_squad_examples(examples)
         nbest = {}
         for example in eval_examples:
-            context  = arabert_prep.preprocess(example["context"])
-            question = arabert_prep.preprocess(example["question"])
+            context  = example["context"]
+            question = example["question"]
             answers = self.query_model(question, context)
             for answer in answers:
-                if example.qas_id not in nbest:
-                    old_answer_score = nbest[example.qas_id][0]["start_logit"] * nbest[example.qas_id][0]["end_logit"]
+                if example["id"] in nbest:
+                    old_answer_score = nbest[example["id"]][0]["start_logit"] * nbest[example["id"]][0]["end_logit"]
                     new_answer_score = answer["s"] * answer["e"]
                     if new_answer_score > old_answer_score:
-                        nbest[example.qas_id][0] = {                  # just for getting along with SOQAL interface
+                        nbest[example["id"]][0] = {                  # just for getting along with SOQAL interface
                             'start_logit': answer["s"],
                             'end_logit': answer["e"],
                             'text': answer["t"]
                         }
                 else:
-                    nbest[example.qas_id][0] = {                  # just for getting along with SOQAL interface
+                    nbest[example["id"]] = {}
+                    nbest[example["id"]][0] = {                  # just for getting along with SOQAL interface
                         'start_logit': answer["s"],
                         'end_logit': answer["e"],
                         'text': answer["t"]
                     }
+                if output_to_file:
+                    all_predictions[example["id"]] = nbest[example["id"]][0]["text"]
+        if output_to_file:
+            with tf.gfile.GFile(output_prediction_file, "w") as writer:
+                    writer.write(json.dumps(all_predictions, indent=4) + "\n")
         return nbest
